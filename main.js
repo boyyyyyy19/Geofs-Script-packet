@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoFS All-in-One Addon
-// @version      1.0.2
+// @version      1.0
 // @description  Combines functionalities from various GeoFS addons for an enhanced simulation experience.
 // @author     boyyyyyy19 with some ChatGPT
 // ==/UserScript==
@@ -1936,6 +1936,8 @@ function main() {
 })();
 // == GeoFS-Flight-Path-Vector ==
 
+
+// To add scripts, use the following template:
 // ==()==
 (function() {
     // () initialization code
