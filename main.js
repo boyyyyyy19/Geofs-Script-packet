@@ -5,7 +5,7 @@
 // @author     boyyyyyy19 with some ChatGPT
 // ==/UserScript==
 
-
+console.log('Everything loaded successfully!');
 
 // ==GeoFS Faster FPS==
 (function() {
@@ -2151,4 +2151,3 @@ function main() {
 })();
 // ==/( )==
 
-console.log('Everything loaded successfully!');
