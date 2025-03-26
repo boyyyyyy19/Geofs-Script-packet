@@ -8,4 +8,4 @@ If you want to run the bookmarklet version:
 
 If you want to run the Tampermonkey version:
 - Make sure you have Tampermonkey installed
-- Add tampermonkey-code.js as a new userscript
+- Add main.js as a new userscript
