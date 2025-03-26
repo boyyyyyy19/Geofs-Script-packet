@@ -1,3 +1,2 @@
-- get rid of slew mode addon
-- get rid of streetlight addon
-- add liviry changer
+
+- add liviry changer (how to add this?)
