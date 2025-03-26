@@ -2,6 +2,7 @@
 // @name         GeoFS All-in-One Addon
 // @version      1.0.1
 // @description  Combines functionalities from various GeoFS addons for an enhanced simulation experience.
+// @author     boyyyyyy19 with some ChatGPT
 // ==/UserScript==
 
 
