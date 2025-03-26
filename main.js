@@ -1,8 +1,7 @@
 // ==UserScript==
 // @name         GeoFS All-in-One Addon
-// @version      1.0.0
+// @version      1.0.1
 // @description  Combines functionalities from various GeoFS addons for an enhanced simulation experience.
-// @author       Combined by ChatGPT
 // ==/UserScript==
 
 
@@ -2445,7 +2444,210 @@ setTimeout((function() {
 })();
 // ==/GeoFS Landing Stats==
 
-// ==())==
+// == GeoFS-chat-cleaner ==
+(function() {
+    // GeoFS-chat-cleaner initialization code
+    // ==UserScript==
+// @name         Chat cleaner
+// @namespace    https://github.com/KittenApps-Films/Geofs-chat-cleaner
+// @version      2025-02-09
+// @description  Filters GeoFS chat for bad words
+// @author       Noah S. Davidson, GeoFS call sign KittenFilms[KFA]
+// @match        http://geo-fs.com/geofs.php?v=*
+// @match        http://www.geo-fs.com/geofs.php?v=*
+// @match        https://geo-fs.com/geofs.php?v=*
+// @match        https://www.geo-fs.com/geofs.php?v=*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=geo-fs.com
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=geo-fs.com
+// @grant        none
+// ==/UserScript==
+
+window.addEventListener('load', function() {
+    'use strict';
+    let exeptions = ["fun", "cockpit", "fuel"]
+    let bad = ["wtf", "damn"]
+    var cleaner = document.createElement('script');
+    cleaner.src="https://cdn.jsdelivr.net/npm/profanity-cleaner@latest";
+    cleaner.id = "profanity-cleaner";
+    document.body.appendChild(cleaner);
+    var words = document.createElement('script');
+    var stringE = ""
+    var stringA = ""
+    exeptions.forEach(exe)
+    bad.forEach(maker)
+    words.innerHTML = "let exeptions = [" + stringE + "]; let newBad = [" + stringA + "];";
+    function exe(item, index) {
+        stringE += "\""+item+"\","
+    }
+    function maker(item, index) {
+        stringA += "\""+item+"\","
+    }
+    words.id = "Chat cleaner exeptions and allowed";
+    document.body.appendChild(words);
+    var chat = document.createElement('script');
+    chat.src="https://kittenapps-films.github.io/Geofs-chat-cleaner/chat-cleaner.js";
+    chat.id = "Chat cleaner add-on";
+    document.body.appendChild(chat);
+    console.log("Chat cleaner installed");
+})
+    function init() {
+        // Example: Clean up the chat
+        console.log('GeoFS-chat-cleaner Initialized');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == GeoFS-chat-cleaner ==
+ 
+// == Better-GeoFS-NAV-Map ==
+(function() {
+    // Better-GeoFS-NAV-Map initialization code
+    function init() {
+        // Example: better nav map
+        console.log('Better-GeoFS-NAV-Map Initialized');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == Better-GeoFS-NAV-Map ==
+
+// == Screen-Space Reflection Shader ==
+(function() {
+    // Screen-Space Reflection Shader initialization code
+    geofs["rrt.glsl"] = "" + '\n//Using a modified version of the default CesiumJS AO shader for base functions\nuniform sampler2D depthTexture;\nuniform sampler2D colorTexture;\nuniform int viewType;\nuniform bool smoothNormals;\nuniform bool isEnabled;\nuniform float strength;\nvarying vec2 v_textureCoordinates;\n#ifdef GL_OES_standard_derivatives\n    #extension GL_OES_standard_derivatives : enable\n#endif  \n\n//#define CZM_SELECTED_FEATURE \n\nfloat rand(vec2 co){\n    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);\n}\n\nvec4 clipToEye(vec2 uv, float depth)\n{\n    vec2 xy = vec2((uv.x * 2.0 - 1.0), ((1.0 - uv.y) * 2.0 - 1.0));\n    vec4 posEC = czm_inverseProjection * vec4(xy, depth, 1.0);\n    posEC = posEC / posEC.w;\n    return posEC;\n}\n\nvec4 depthToView(vec2 texCoord, float depth) {\n    vec4 ndc = vec4(texCoord, depth, 1.0) * 2.0 - 1.0;\n    vec4 viewPos = czm_inverseProjection * ndc;\n    return viewPos / viewPos.w;\n}\n\nvec3 viewToDepth(vec3 pos)\n{\n  vec4 clip = czm_projection * vec4(pos,1.0);\n  vec3 ndc = clip.xyz / clip.w;\n  return ndc * .5 + .5;\n}\n\n//Reconstruct Normal Without Edge Removation\nvec3 getNormalXEdge(vec3 posInCamera, float depthU, float depthD, float depthL, float depthR, vec2 pixelSize)\n{\n    vec4 posInCameraUp = clipToEye(v_textureCoordinates - vec2(0.0, pixelSize.y), depthU);\n    vec4 posInCameraDown = clipToEye(v_textureCoordinates + vec2(0.0, pixelSize.y), depthD);\n    vec4 posInCameraLeft = clipToEye(v_textureCoordinates - vec2(pixelSize.x, 0.0), depthL);\n    vec4 posInCameraRight = clipToEye(v_textureCoordinates + vec2(pixelSize.x, 0.0), depthR);\n\n    vec3 up = posInCamera.xyz - posInCameraUp.xyz;\n    vec3 down = posInCameraDown.xyz - posInCamera.xyz;\n    vec3 left = posInCamera.xyz - posInCameraLeft.xyz;\n    vec3 right = posInCameraRight.xyz - posInCamera.xyz;\n\n    vec3 DX = length(left) < length(right) ? left : right;\n    vec3 DY = length(up) < length(down) ? up : down;\n\n    return normalize(cross(DY, DX));\n}\n\n\n\n\n//smooth normals with blur\nvec3 recNormals(vec3 pos) {\n  float dMp = 0.006 * pos.z; //how far we sample from the original point\n  vec3 P0 = depthToView(pos.xy, pos.z).xyz;\n  vec3 normal = normalize(cross(dFdx(P0), dFdy(P0)));\n  float d1 = czm_readDepth(depthTexture, vec2(pos.x + dMp, pos.y + dMp));\n  float d2 = czm_readDepth(depthTexture, vec2(pos.x - dMp, pos.y + dMp));\n  float d3 = czm_readDepth(depthTexture, vec2(pos.x + dMp, pos.y - dMp));\n  float d4 = czm_readDepth(depthTexture, vec2(pos.x - dMp, pos.y - dMp));\n  \n  vec3 P1 = depthToView(vec2(pos.x + dMp, pos.y + dMp), d1).xyz;\n  vec3 P2 = depthToView(vec2(pos.x - dMp, pos.y + dMp), d2).xyz;\n  vec3 P3 = depthToView(vec2(pos.x + dMp, pos.y - dMp), d3).xyz;\n  vec3 P4 = depthToView(vec2(pos.x - dMp, pos.y - dMp), d4).xyz;\n  vec3 normal1 = normalize(cross(dFdx(P1), dFdy(P1)));\n  vec3 normal2 = normalize(cross(dFdx(P2), dFdy(P2)));\n  vec3 normal3 = normalize(cross(dFdx(P3), dFdy(P3)));\n  vec3 normal4 = normalize(cross(dFdx(P4), dFdy(P4)));\n  if (normal1 == vec3(0.0)) { // fix edge blending\n    normal1 = normal;\n  }\n\n  if (normal2 == vec3(0.0)) {\n    normal2 = normal;\n  }\n\n  if (normal3 == vec3(0.0)) {\n    normal3 = normal;\n  }\n\n  if (normal4 == vec3(0.0)) {\n    normal4 = normal;\n  }\n\n  if(smoothNormals == true) {\n  return (normal + normal1 + normal2 + normal3 + normal4) / 5.0;\n  } else {\nreturn normal;\n  }\n}\n\nvec3 blurNormals(vec2 uv) {\n\n    const float Directions = 4.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)\n    const float Quality = 1.0; // BLUR QUALITY (Default 4.0 - More is better but slower)\n    const float Size = 8.0; // BLUR SIZE (Radius)\n    // GAUSSIAN BLUR SETTINGS }}}\n   \n    vec2 Radius = Size/czm_viewport.zw;\n    const float Pi = czm_twoPi;\n    const float PidD = Pi/Directions;\n    // Pixel colour\n    float depth = czm_readDepth(depthTexture, uv);\n    vec3 Color = recNormals(vec3(uv, depth));\n    \n    // Blur calculations\n    for( float d=0.0; d<Pi; d+=PidD)\n    {\n\t\tfor(float i=1.0/Quality; i<=1.0; i+=1.0/Quality)\n        {\n      vec2 newUv = uv+vec2(cos(d),sin(d))*Radius*i;\n      float newDepth = czm_readDepth(depthTexture, newUv);\n\t\t\tColor += recNormals(vec3(newUv, newDepth));\t\t\n        }\n    }\n    \n    // Output to screen\n    Color /= Quality * Directions - 15.0;\n    return Color;\n}\n\nvoid main(void)\n{\n#ifdef CZM_SELECTED_FEATURE\n    if (!czm_selected()) {\n      gl_FragColor = texture2D(colorTexture, v_textureCoordinates);\n      return;\n    }\n#endif\n    if (isEnabled == false) {\n      gl_FragColor = texture2D(colorTexture, v_textureCoordinates);\n      return;\n    }\n    if (viewType == 1) {\n      gl_FragColor = texture2D(colorTexture, v_textureCoordinates);\n    return;\n    }\n    vec4 color;\n    vec4 colAtRef;\n    vec3 normals;\n    float depth1 = czm_readDepth(depthTexture, v_textureCoordinates);\n    vec4 posInCamera = clipToEye(v_textureCoordinates, depth1);\n    vec4 initialPos = depthToView(v_textureCoordinates, depth1); //just vec3 version of posInCamera ig lol\n    if (smoothNormals == true) {\n       normals = blurNormals(v_textureCoordinates);\n    } else {\n       normals = recNormals(vec3(v_textureCoordinates, depth1));\n    }\n    vec2 pixelSize = czm_pixelRatio / czm_viewport.zw;\n    float depthU = czm_readDepth(depthTexture, v_textureCoordinates - vec2(0.0, pixelSize.y));\n    float depthD = czm_readDepth(depthTexture, v_textureCoordinates + vec2(0.0, pixelSize.y));\n    float depthL = czm_readDepth(depthTexture, v_textureCoordinates - vec2(pixelSize.x, 0.0));\n    float depthR = czm_readDepth(depthTexture, v_textureCoordinates + vec2(pixelSize.x, 0.0));\n    vec3 normalInCamera = getNormalXEdge(posInCamera.xyz, depthU, depthD, depthL, depthR, pixelSize);\n    //normalInCamera = 2.0 * normalInCamera - 1.0;\nfloat maxDistance = 8.0;\nfloat resolution  = 0.5;\nint   steps       = 5;\nfloat thickness   = 0.1;\n\nvec4 uv;\nvec2 texSize  = czm_viewport.zw;\nvec2 texCoord = v_textureCoordinates / texSize;\nvec4 positionFrom     = initialPos;\nvec3 unitPositionFrom = normalize(positionFrom.xyz);\nvec3 normal           = normalize(normals);\nvec3 pivot            = normalize(reflect(unitPositionFrom, normal));\n\n\nvec3 diffVec = clamp((unitPositionFrom.xyz - abs(normal)) * 10.0 * (10.0 * depth1), 0.0, 10.0);\nfloat dotP = clamp(-dot(normal, unitPositionFrom) * 10.0 * (4.0 * depth1), 0.0, 10.0);\nfloat diffTest = clamp(1.0 - dot(pivot, unitPositionFrom), 0.0, 1.0);\nvec4 startView = vec4(positionFrom.xyz + (pivot * 0.0), 1.0);\nvec4 endView   = vec4(positionFrom.xyz + (pivot * maxDistance), 1.0);\nfloat distTo = length(startView - endView);\n\n  vec4 startFrag      = startView;\n       // Project to screen space.\n       startFrag      = czm_projection * startFrag;\n       // Perform the perspective divide.\n       startFrag.xyz /= startFrag.w;\n       // Convert the screen-space XY coordinates to UV coordinates.\n       startFrag.xy   = startFrag.xy * 0.5 + 0.5;\n       // Convert the UV coordinates to fragment/pixel coordnates.\n       startFrag.xy  *= texSize;\n\n  vec4 endFrag      = endView;\n       endFrag      = czm_projection * endFrag;\n       endFrag.xyz /= endFrag.w;\n       endFrag.xy   = endFrag.xy * 0.5 + 0.5;\n       endFrag.xy  *= texSize;\n\n  vec2 frag  = startFrag.xy;\n       uv.xy = frag / texSize;\n\n float deltaX    = endFrag.x - startFrag.x;\n  float deltaY    = endFrag.y - startFrag.y;\n float useX      = abs(deltaX) >= abs(deltaY) ? 1.0 : 0.0;\n  float delta     = mix(abs(deltaY), abs(deltaX), useX) * clamp(resolution, 0.0, 1.0);\n\n  vec2  increment = vec2(deltaX, deltaY) / max(delta, 0.001);\n\n\n  float search0 = 0.0;\n  float search1 = 0.0;\n\nfloat currentX = (startFrag.x) * (1.0 - search1) + (endFrag.x) * search1;\nfloat currentY = (startFrag.y) * (1.0 - search1) + (endFrag.y) * search1;\n\n  float hit0 = 0.0;\n  float hit1 = 0.0;\n\n  float viewDistance = startView.z;\n  float depth        = thickness;\n\n  for (int i = 0; i < 10000; ++i) {\n    if (i > int(delta)) {\n      break;\n    }\n    if (depth1 > 0.99) {\n      break;\n    }\n    if (diffTest > 0.9 ) {\n      break;\n\n}\n    frag      += increment;\n    uv.xy      = frag / texSize;\n    vec4 positionTo = clipToEye(uv.xy, uv.z);\n              search1 =\n              mix\n              ((frag.y - startFrag.y) / deltaY\n              ,(frag.x - startFrag.x) / deltaX\n              ,useX\n              );\n        viewDistance = (startView.y * endView.y) / mix(endView.y, startView.y, search1);\n        depth        = viewDistance - positionTo.y;\n\n    if (depth > 0.5 && depth < thickness) {\n      hit0 = 1.0;\n      break;\n    } else {\n      search0 = search1;\n    }\n    search1 = search0 + ((search1 - search0) / 2.0);\n    steps *= int(hit0);\n\n    for (int i = 0; i < 10000; ++i) {\n    if (i > steps) {\n      break;\n    }\n    frag       = mix(startFrag.xy, endFrag.xy, search1);\n    uv.xy      = frag / texSize;\n    positionTo = clipToEye(uv.xy, uv.z);\n    viewDistance = (startView.y * endView.y) / mix(endView.y, startView.y, search1);\n    depth        = viewDistance - positionTo.y;\n    if (depth > 0.0 && depth < thickness) {\n      hit1 = 1.0;\n      search1 = search0 + ((search1 - search0) / 2.0);\n    } else {\n      float temp = search1;\n      search1 = search1 + ((search1 - search0) / 2.0);\n      search0 = temp;\n    }\n    float visibility = hit1 * positionTo.w * ( 1.0 - max(dot(-unitPositionFrom, pivot), 0.0)) * (1.0 - clamp(depth / thickness, 0.0, 1.0)) * (1.0 - clamp(length(positionTo - positionFrom) / maxDistance, 0.0, 1.0)) * (uv.x < 0.0 || uv.x > 1.0 ? 0.0 : 1.0) * (uv.y < 0.0 || uv.y > 1.0 ? 0.0 : 1.0);\n      \n  visibility = clamp(visibility, 0.0, 1.0);\n  uv.ba = vec2(visibility);\n         colAtRef = texture2D(colorTexture, uv.xy);\n        //gl_FragColor = uv; //display uv debug\n          //gl_FragColor = texture2D(colorTexture, uv.xy); //display reflections\n         //gl_FragColor = vec4(1.0) *  diffTest;\n        //gl_FragColor = vec4(normals, 1.0);\n    }\n  }\n  color = texture2D(colorTexture, v_textureCoordinates);\n if (colAtRef.rgb == vec3(0.0)) {\n    gl_FragColor = color;\n  } else {\n  vec4 mix = mix(color, colAtRef, strength);\n  gl_FragColor = mix; //Ref+Col\n  } \n}\n';
+    geofs.ssr={},geofs.ssr.isEnabled=!1,geofs.ssr.sNorm=!0,geofs.ssr.strength=1,geofs.ssr.update=function(){geofs.ssr.isEnabled?(geofs.ssr.isEnabled=!1,toggle.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded")):(geofs.ssr.isEnabled=!0,toggle.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded is-checked"))},geofs.ssr.update1=function(){geofs.ssr.sNorm?(geofs.ssr.sNorm=!1,normals.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded")):(geofs.ssr.sNorm=!0,normals.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded is-checked"))};let elementSel=document.getElementsByClassName("geofs-preference-list")[0].getElementsByClassName("geofs-advanced")[0].getElementsByClassName("geofs-stopMousePropagation")[0],toggle=document.createElement("label");toggle.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded"),toggle.setAttribute("for","ssr"),toggle.setAttribute("id","ssr"),toggle.setAttribute("tabindex","0"),toggle.setAttribute("dataUpgraded",",MaterialSwitch,MaterialRipple"),toggle.innerHTML='<input type="checkbox" id="airports" class="mdl-switch__input" data-gespref="geofs.ssr.isEnabled"><span class="mdl-switch__label">Screen Space Reflections</span>';let normals=document.createElement("label");normals.setAttribute("class","mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded"),normals.setAttribute("for","normals"),normals.setAttribute("id","normals"),normals.setAttribute("tabindex","0"),normals.setAttribute("dataUpgraded",",MaterialSwitch,MaterialRipple"),normals.innerHTML='<input type="checkbox" id="airports" class="mdl-switch__input" data-gespref="geofs.ssr.sNorm"><span class="mdl-switch__label">Smooth Normals</span>';let strength=document.createElement("div");function updateStrength(){}strength.setAttribute("class","slider"),strength.setAttribute("data-type","slider"),strength.setAttribute("id","strength"),strength.setAttribute("value","1.0"),strength.setAttribute("data-min","0.0"),strength.setAttribute("data-max","1.0"),strength.setAttribute("data-precision","1.0"),strength.setAttribute("data-gespref","geofs.ssr.a"),strength.setAttribute("data-update","{updateStrength()}"),strength.innerHTML='<div class="slider-rail"><div class="slider-selection" style="width: 100%;"><div class="slider-grippy"><input class="slider-input"></div></div></div><label>Reflection Strength</label>',elementSel.appendChild(toggle),elementSel.appendChild(normals),elementSel.appendChild(strength),toggle.addEventListener("click",geofs.ssr.update),normals.addEventListener("click",geofs.ssr.update1),geofs.fx.rrt={create:function(){geofs.fx.rrt.shader=new Cesium.PostProcessStage({fragmentShader:geofs["rrt.glsl"],uniforms:{reflectionMap:"/shaders/reflection.jpg",intensity:3,bias:.1,lengthCap:.26,stepSize:1.95,frustumLength:1e3,viewType:geofs.camera.currentMode,isEnabled:geofs.ssr.isEnabled,smoothNormals:geofs.ssr.sNorm,strength:1}}),geofs.fx.rrt.shader.selected=[geofs.aircraft.instance.object3d.model._model],geofs.api.viewer.scene.postProcessStages.add(geofs.fx.rrt.shader)},update:function(){geofs.fx.rrt.shader.uniforms.viewType=geofs.camera.currentMode,geofs.fx.rrt.shader.uniforms.isEnabled=geofs.ssr.isEnabled,geofs.fx.rrt.shader.uniforms.smoothNormals=geofs.ssr.sNorm,geofs.fx.rrt.shader.uniforms.strength=geofs.ssr.strength,geofs.fx.rrt.shader.selected=[geofs.aircraft.instance.object3d.model._model]}},geofs.fx.rrt.create(),setInterval(function(){geofs.fx.rrt.update()},100),geofs.setPreferenceFromInput=function(a){try{var c=a.getAttribute("data-gespref");if(c){var g=a.getAttribute("data-type")||a.getAttribute("type");"SELECT"==a.nodeName&&(g="select"),g=g.toLowerCase();var e=c.split(".");c=window;for(var d=0;d<e.length-1;d++)c=c[e[d]];switch(g){case"radio-button":$(a).is(".is-checked")&&(c[e[d]]=a.getAttribute("data-matchvalue"));break;case"checkbox":var f=a.getAttribute("data-matchvalue"),b=a.checked;f?b&&(c[e[d]]=f):c[e[d]]=b;break;case"radio":f=a.getAttribute("data-matchvalue"),b=a.checked,f?b&&(b=c[e[d]]=f):c[e[d]]=b;break;case"slider":b=parseFloat($(a).slider("value")),"strength"===$(a)[0].id&&(geofs.ssr.strength=b),c[e[d]]=b;break;case"keydetect":b=a.value,c[e[d]].keycode=parseInt(a.getAttribute("keycode")),c[e[d]].label=b;break;default:b=a.value,c[e[d]]=b}var h=a.getAttribute("data-update");if(h){var i=new Function("value",h);try{i.call(a,b)}catch(j){geofs.debug.error(j,"setPreferenceFromInput updateFunction.call")}}}}catch(k){geofs.debug.error(k,"geofs.setPreferenceFromInput")}}
+    function init() {
+        // Example: Screen-Space Reflection Shader
+        console.log('');
+        // Additional code for  enhancements
+        console.log('https://github.com/Ariakim-Taiyo/GeoFS-Shaders-Repository/blob/main/SSR/SSR.md ; link to description of SSR');
+    }
+    init();
+})();
+// == Screen-Space Reflection Shader ==
+
+// == GeoFS-Flight-Path-Vector ==
+(function() {
+    // GeoFS-Flight-Path-Vector initialization code
+    // ==UserScript==
+// @name         GeoFS Flight Path Vector
+// @version      1.0
+// @description  Displays a Flight Path Vector on the screen
+// @author       GGamerGGuy
+// @match        https://www.geo-fs.com/geofs.php?v=*
+// @match        https://*.geo-fs.com/geofs.php*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=geo-fs.com
+// @grant        none
+// ==/UserScript==
+
+// Notes
+// Pressing 'l' will hide the FPV
+// The FPV is calculated based on the camera's position. This means that the FPV shows where the camera would hit the ground if it were to keep going in the same direction, and not the aircraft.
+function cF(x, y, z) {
+    return { x, y, z };
+}
+function waitForEntities() {
+    try {
+        if (geofs.api) {
+            // Entities are already defined, no need to wait
+            main();
+            return;
+        }
+    } catch (error) {
+        // Handle any errors (e.g., log them)
+        console.log('Error in waitForEntities:', error);
+    }
+    // Retry after 1000 milliseconds
+    setTimeout(waitForEntities, 1000);
+}
+window.lastLoc;
+window.onload = setTimeout(waitForEntities, 10000);
+window.howFar = 15; //                                THIS DETERMINES HOW FAR AWAY THE DOT IS. IT IS A FACTOR, AND THE ACTUAL DISTANCE IS DIRECTLY RELATED TO THE TRUE AIRSPEED.
+function main() {
+    (function() {
+        'use strict';
+        window.y = geofs.api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(geofs.camera.lla[1], geofs.camera.lla[0], (geofs.animation.values.groundElevationFeet/3.2808399)),
+            billboard: {
+                image: "https://tylerbmusic.github.io/GPWS-files_geofs/FPV.png",
+                scale: 0.03 * (1/geofs.api.renderingSettings.resolutionScale),
+            },
+        });
+        if (geofs.api.renderingSettings.resolutionScale <= 0.6) {
+                    window.y.billboard.image = 'https://tylerbmusic.github.io/GPWS-files_geofs/FPV_Lowres.png';
+                }
+        window.lastLoc = Cesium.Cartesian3.fromDegrees(geofs.camera.lla[1], geofs.camera.lla[0], geofs.camera.lla[2]);
+        // Update display
+        function updateFlightDataDisplay() {
+            // Check if geofs.animation.values is available
+            if (geofs.animation.values && !geofs.isPaused()) {
+                if (window.currLoc) {
+                    window.lastLoc = window.currLoc;
+                }
+                window.currLoc = Cesium.Cartesian3.fromDegrees(geofs.camera.lla[1], geofs.camera.lla[0], geofs.camera.lla[2]);
+                window.deltaLoc = [(window.currLoc.x-window.lastLoc.x), (window.currLoc.y-window.lastLoc.y), (window.currLoc.z-window.lastLoc.z)];
+                // Retrieve and format the required values
+                var agl = (geofs.animation.values.altitude !== undefined && geofs.animation.values.groundElevationFeet !== undefined) ? Math.round((geofs.animation.values.altitude - geofs.animation.values.groundElevationFeet) + (geofs.aircraft.instance.collisionPoints[geofs.aircraft.instance.collisionPoints.length - 2].worldPosition[2]*3.2808399)) : 'N/A';
+                var glideslope;
+                if (geofs.animation.getValue("NAV1Direction") && (geofs.animation.getValue("NAV1Distance") !== 600)) { //The second part to the if statement prevents the divide by 0 error.
+                    glideslope = (geofs.animation.getValue("NAV1Direction") === "to") ? (Math.atan((agl*0.3048) / (geofs.animation.getValue("NAV1Distance")+600))*RAD_TO_DEGREES).toFixed(1) : (Math.atan((agl*0.3048) / Math.abs(geofs.animation.getValue("NAV1Distance")-600))*RAD_TO_DEGREES).toFixed(1); //The center of the aiming point is exactly 600 meters from the start of the runway (in GeoFS).
+                } else {
+                    glideslope = 'N/A';
+                }
+                if (!geofs.aircraft.instance.groundContact && !(window.deltaLoc[0]+window.deltaLoc[1]+window.deltaLoc[2] == 0)) {
+                    window.y.position = cF(window.currLoc.x+(window.howFar*window.deltaLoc[0]), (window.currLoc.y+(window.howFar*window.deltaLoc[1])), (window.currLoc.z+(window.howFar*window.deltaLoc[2])));
+                }
+
+                // Display css
+                var flightDataElement = document.getElementById('flightDataDisplay0');
+                if (!flightDataElement) {
+                    flightDataElement = document.createElement('div');
+                    flightDataElement.id = 'flightDataDisplay0';
+                    flightDataElement.style.position = 'fixed';
+                    flightDataElement.style.bottom = '0';
+                    flightDataElement.style.right = 'calc(10px + 48px + 16px)';
+                    flightDataElement.style.height = '36px';
+                    flightDataElement.style.minWidth = '64px';
+                    flightDataElement.style.padding = '0 16px';
+                    flightDataElement.style.display = 'inline-block';
+                    flightDataElement.style.fontFamily = '"Roboto", "Helvetica", "Arial", sans-serif';
+                    flightDataElement.style.fontSize = '14px';
+                    flightDataElement.style.textTransform = 'uppercase';
+                    flightDataElement.style.overflow = 'hidden';
+                    flightDataElement.style.willChange = 'box-shadow';
+                    flightDataElement.style.transition = 'box-shadow .2s cubic-bezier(.4,0,1,1), background-color .2s cubic-bezier(.4,0,.2,1), color .2s cubic-bezier(.4,0,.2,1)';
+                    flightDataElement.style.textAlign = 'center';
+                    flightDataElement.style.lineHeight = '36px';
+                    flightDataElement.style.verticalAlign = 'middle';
+                    flightDataElement.style.zIndex = '9999';
+                    document.body.appendChild(flightDataElement);
+                }
+
+                flightDataElement.innerHTML = `
+                <span style="background: 0 0; border: none; border-radius: 2px; color: #000; display: inline-block; padding: 0 8px;">Glideslope ${glideslope}</span>
+            `;
+            }
+        }
+
+        // Update flight data display every 100ms
+        setInterval(updateFlightDataDisplay, (geofs.debug.fps ? (1/(Number(geofs.debug.fps)))+5 : 100)); //The +5 gives a buffer and the : 100 is an attempt to prevent a huge lag spike on touchdown that I was encountering.
+        document.addEventListener('keydown', function(event) {
+                if (event.key === 'l') {
+                    window.y.show = !window.y.show;
+                }
+        });
+    })();
+}
+    function init() {
+        // Example: Display flight path vector
+        console.log('GeoFS-Flight-Path-Vector Initialized');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == GeoFS-Flight-Path-Vector ==
+
+// ==()==
 (function() {
     // () initialization code
     function init() {
@@ -2455,4 +2657,6 @@ setTimeout((function() {
     }
     init();
 })();
-// ==/() )==
+// ==/( )==
+
+console.log('Everything loaded successfully!');
