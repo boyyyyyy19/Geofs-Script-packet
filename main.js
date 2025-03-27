@@ -1746,19 +1746,6 @@ window.addEventListener('load', function() {
  
 // == Better-GeoFS-NAV-Map ==
 (function() {
-    // Better-GeoFS-NAV-Map initialization code
-    // ==UserScript==
-// @name         Better GeoFS NAV Map
-// @version      1.0
-// @description  Changes the map tiles of GeoFS NAV map
-// @author       krunchiekrunch
-// @match        https://*.geo-fs.com/geofs.php*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=geo-fs.com
-// @grant        none
-// @license      GPL-3.0
-// ==/UserScript==
-
-(function() {
     'use strict';
 
     // tile provider selector (googleHybrid, googleStreets, geofs)
@@ -1773,10 +1760,10 @@ window.addEventListener('load', function() {
 
     // wait for geofs to fully load before changing map tile provider
     function waitForGeoFS() {
-        if (typeof geofs !== 'undefined' && typeof geofs.osmTileProvider !== 'undefined') {
+        if (typeof geofs !== 'undefined' && typeof geofs.osmTileProvider !== 'undefined' && document.getElementById('leafletMap')) {
             changeTileProvider();
         } else {
-            setTimeout(waitForGeoFS, 10000);
+            setTimeout(waitForGeoFS, 15000); // Increased wait time to 15 seconds
         }
     }
 
@@ -1790,13 +1777,6 @@ window.addEventListener('load', function() {
     }
 
     waitForGeoFS();
-})();
-    function init() {
-        // Example: better nav map
-        console.log('Better-GeoFS-NAV-Map Initialized');
-        // Additional code for  enhancements
-    }
-    init();
 })();
 // == Better-GeoFS-NAV-Map ==
 
