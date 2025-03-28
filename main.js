@@ -2888,16 +2888,10 @@ window.LiverySelector = {
 // == GeoFSAdBlock ==
 (function() {
     // GeoFSAdBlock initialization code
-    function removeAds() {
-        const adSelector = ".geofs-adbanner";
-        
-        const ads = document.querySelectorAll(adSelector);
-        ads.forEach(ad => {
-            ad.remove();
-        });
-    }
-    
-    window.addEventListener('load', removeAds);
+    const adBanner = document.querySelector("body > div.geofs-adbanner.geofs-adsense-container");
+    if (adBanner && adBanner.parentNode) {
+      adBanner.parentNode.removeChild(adBanner);
+    }    
     function init() {
         // Example: Enhance  features
         console.log('Ads removed');
