@@ -1,1 +1,3 @@
-
+- add https://github.com/Ariakim-Taiyo/Improved-Wingflex-Geofs
+- add https://github.com/Ariakim-Taiyo/Geofs-Props-Physics-Overhaul
+- add https://github.com/Ariakim-Taiyo/777-Realism-Overhaul/blob/main/index.js with if statement for 777-300ER
