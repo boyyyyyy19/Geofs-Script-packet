@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoFS All-in-One Addon
-// @version      1.2
+// @version      1.3
 // @description  Combines functionalities from various GeoFS addons for an enhanced simulation experience.
 // @author     boyyyyyy19 with some ChatGPT
 // ==/UserScript==
@@ -2900,6 +2900,187 @@ window.LiverySelector = {
     init();
 })();
 // == GeoFSAdBlock ==
+
+
+// == Improved-Wingflex-Geofs ==
+(function() {
+    // Improved-Wingflex-Geofs initialization code
+    geofs.animation.values.liftLeftWing = 1
+geofs.animation.values.liftRightWing = 1
+
+if (geofs.aircraft.instance.id == 3179 || geofs.aircraft.instance.id == 3180){
+function resetLift(){
+geofs.animation.values.liftLeftWing = -geofs.aircraft.instance.parts.leftwing.lift / 200000;
+geofs.animation.values.liftRightWing = -geofs.aircraft.instance.parts.rightwing.lift / 200000;
+};
+geofs.aircraft.instance.setup.parts[3].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[4].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[5].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[6].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[7].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[8].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[0].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[1].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.lights[2].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[3].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.lights[2].animations[1].value = "liftRightWing"
+geofs.aircraft.instance.lights[3].animations[1].value = "liftLeftWing"
+setInterval(function(){
+resetLift();
+}, 20)
+};
+
+if (geofs.aircraft.instance.id == 2973){
+function resetLift1(){
+geofs.animation.values.liftLeftWing = -geofs.aircraft.instance.parts.leftwing.lift / 200000;
+geofs.animation.values.liftRightWing = -geofs.aircraft.instance.parts.rightwing.lift / 200000;
+};
+geofs.aircraft.instance.setup.parts[2].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[3].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[4].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[16].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[17].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[18].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[0].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[1].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.lights[2].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[3].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.lights[2].animations[1].value = "liftRightWing"
+geofs.aircraft.instance.lights[3].animations[1].value = "liftLeftWing"
+setInterval(function(){
+resetLift1();
+}, 20)
+};
+
+if (geofs.aircraft.instance.id == 2386 || geofs.aircraft.instance.id == 240){
+function resetLift2(){
+geofs.animation.values.liftLeftWing = -geofs.aircraft.instance.parts.wingleft.lift / 200000;
+geofs.animation.values.liftRightWing = -geofs.aircraft.instance.parts.wingright.lift / 200000;
+};
+geofs.aircraft.instance.setup.parts[3].animations[1].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[4].animations[1].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[5].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[6].animations[0].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[7].animations[1].value = "liftLeftWing"
+geofs.aircraft.instance.setup.parts[8].animations[1].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[9].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.setup.parts[10].animations[0].value = "liftRightWing"
+geofs.aircraft.instance.lights[6].animations[1].value = "liftRightWing"
+geofs.aircraft.instance.lights[1].animations[2].value = "liftLeftWing"
+geofs.aircraft.instance.lights[6].animations[2].value = "liftRightWing"
+geofs.aircraft.instance.lights[1].animations[1].value = "liftLeftWing"
+geofs.aircraft.instance.lights[5].animations[1].value = "liftleftWing"
+geofs.aircraft.instance.lights[5].animations[2].value = "liftLeftWing"
+geofs.aircraft.instance.lights[10].animations[1].value = "liftRightWing"
+geofs.aircraft.instance.lights[10].animations[2].value = "liftRightWing"
+setInterval(function(){
+resetLift2();
+}, 20)
+};
+    function init() {
+        // Example: Enhance  features
+        console.log('Improved-Wingflex-Geofs loaded');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == Improved-Wingflex-Geofs ==
+
+// == Geofs-Props-Physics-Overhaul ==
+(function() {
+    // Geofs-Props-Physics-Overhaul initialization code
+    if (geofs.aircraft.instance.id === "21" || geofs.aircraft.instance.id === "2" || geofs.aircraft.instance.id === "2808")  {
+        let lastTorque = 0;
+        let engtorquemp = 0;
+        let elevtorquemp = 0;
+        let ailtorquemp = 0;
+        let rudtorquemp = 0;
+        
+        //basic maths to figure out what the engine torque is, then apply it.
+        function tqmaths() {
+          engtorquemp = -(lastTorque - geofs.animation.values.rpm) * 6;
+            geofs.aircraft.instance.rigidBody.applyTorqueImpulse([splitAxes(engtorquemp - ailtorquemp)[0] + splitAxesOffset(elevtorquemp)[0],splitAxes(engtorquemp - ailtorquemp)[1] + splitAxesOffset(elevtorquemp)[1],splitAxes(engtorquemp - ailtorquemp)[2] + splitAxesOffset(elevtorquemp)[2]])
+        };
+        
+        function getEngineTorque() {
+          lastTorque = geofs.animation.values.rpm
+          setTimeout(tqmaths, 100)
+        };
+        
+        //propwash stuff
+        function getControlWash() {
+          elevtorquemp = (geofs.animation.values.rpm / 10) * geofs.animation.values.pitch;
+          ailtorquemp = (geofs.animation.values.rpm / 10) * geofs.animation.values.roll;
+          rudtorquemp = (geofs.animation.values.rpm / 10) * geofs.animation.values.yaw;
+        }
+        
+        //more complicated maths to resolve torque axes
+          //𝐹𝑠=|𝐹⃗ |cos(𝜃𝑠,𝐹)
+        function splitAxes(force) {
+          var angle = geofs.animation.values.heading360 * (Math.PI/180)
+          if (geofs.animation.values.atilt <= 0) {
+          var anglez = geofs.animation.values.atilt - 45
+          }
+          else {
+            var anglez = Math.abs(Math.abs(geofs.animation.values.atilt + 45) - 360)
+          }
+          
+          fx = force * (Math.sin(angle))
+          fy = force * (Math.cos(angle))
+          fz = force * Math.cos(anglez)
+          return [fx, fy, fz];
+        }
+          
+        function splitAxesOffset(force) {
+          var angle = (geofs.animation.values.heading360 - 90 % 360) * (Math.PI/180)
+          if (geofs.animation.values.atilt <= 0) {
+          var anglez = geofs.animation.values.atilt - 45
+          }
+          else {
+            var anglez = Math.abs(Math.abs(geofs.animation.values.atilt + 45) - 360)
+          }
+          
+          fx = force * (Math.sin(angle))
+          fy = force * (Math.cos(angle))
+          fz = force * Math.cos(anglez)
+          return [fx, fy, fz];
+        }
+          
+        function doForces() {
+          getEngineTorque()
+        }
+        
+        //stall and ground effect stuff
+        function stallForces() {
+          if (geofs.animation.values.aoa > 10) {
+            geofs.aircraft.instance.rigidBody.applyTorqueImpulse([splitAxes(Math.random()*geofs.animation.values.aoa * 2)[0],splitAxes(Math.random()*geofs.animation.values.aoa * 2)[1],0])
+          }
+        }
+        
+        function groundEffect() {
+          if (geofs.animation.values.haglFeet <= 10) {
+            geofs.aircraft.instance.rigidBody.applyCentralImpulse([0,0,(-(geofs.animation.values.haglFeet) + 10) * geofs.animation.values.kias])
+          }
+        }
+        
+        interval = setInterval(function(){
+          groundEffect();
+          stallForces();
+          getControlWash();
+          doForces();
+        }, 100)
+        }
+        else {
+          throw("Switch to a compatible plane")
+        }
+    function init() {
+        // Example: Enhance  features
+        console.log('Geofs-Props-Physics-Overhaul loaded');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == Geofs-Props-Physics-Overhaul ==
 
 // To add scripts, use the following template:
 // ==()==
