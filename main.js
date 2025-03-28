@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         GeoFS All-in-One Addon
-// @version      1.1
+// @version      1.2
 // @description  Combines functionalities from various GeoFS addons for an enhanced simulation experience.
 // @author     boyyyyyy19 with some ChatGPT
 // ==/UserScript==
@@ -1882,7 +1882,7 @@ function main() {
 // == GeoFS-Flight-Path-Vector ==
 
 
-// To add scripts, use the following template:
+
 // == GEOFS-LiverySelector ==
 (function() {
     // GEOFS-LiverySelector initialization code
@@ -2883,6 +2883,29 @@ window.LiverySelector = {
     init();
 })();
 // == GEOFS-LiverySelector ==
+
+
+// == GeoFSAdBlock ==
+(function() {
+    // GeoFSAdBlock initialization code
+    function removeAds() {
+        const adSelector = ".geofs-adbanner";
+        
+        const ads = document.querySelectorAll(adSelector);
+        ads.forEach(ad => {
+            ad.remove();
+        });
+    }
+    
+    window.addEventListener('load', removeAds);
+    function init() {
+        // Example: Enhance  features
+        console.log('Ads removed');
+        // Additional code for  enhancements
+    }
+    init();
+})();
+// == GeoFSAdBlock ==
 
 // To add scripts, use the following template:
 // ==()==
